@@ -8,215 +8,231 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
+      margin: 0;
       display: flex;
       min-height: 100vh;
     }
     .sidebar {
-      background-color: #0d47a1;
+      background: #0d47a1;
       color: white;
       padding: 20px;
-      width: 250px;
-      min-height: 100vh;
-      box-sizing: border-box;
+      width: 240px;
+      flex-shrink: 0;
     }
     .sidebar h2 {
-      color: white;
-      margin-top: 0;
+      font-size: 20px;
+      margin-bottom: 20px;
     }
     .sidebar ul {
       list-style: none;
       padding: 0;
     }
-    .sidebar li {
-      margin: 15px 0;
+    .sidebar ul li {
+      margin-bottom: 12px;
+      cursor: pointer;
     }
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      display: block;
-    }
-    .sidebar a:hover {
+    .sidebar ul li:hover {
       text-decoration: underline;
     }
-    .main-content {
-      flex: 1;
+    .content {
+      flex-grow: 1;
       padding: 20px;
-      box-sizing: border-box;
     }
-    table {
-      width: 100% !important;
-    }
-    input, select, button {
-      margin: 5px;
-      padding: 5px;
-    }
-    #formSiswa, #logoutBtn {
-      margin-bottom: 20px;
+    .hidden {
+      display: none;
     }
     @media screen and (max-width: 768px) {
       .sidebar {
-        display: none;
+        width: 100px;
+        font-size: 12px;
+        padding: 10px;
       }
     }
   </style>
 </head>
 <body>
-<div class="sidebar">
-  <h2>Menu</h2>
-  <ul>
-    <li><a href="#">Data Siswa</a></li>
-    <li><a href="#">Nilai Siswa</a></li>
-    <li><a href="#">Nilai Harian</a></li>
-    <li><a href="#">Nilai Semester</a></li>
-    <li><a href="#">Rekap Nilai Semester</a></li>
-  </ul>
-  <p><small>* Nilai semester digunakan sebagai acuan dalam penilaian Kurikulum Merdeka.</small></p>
-</div>
-<div class="main-content">
-  <h2>Dashboard Siswa</h2>
-  <button id="logoutBtn" onclick="logout()">Logout</button>
-  <form id="formSiswa">
-    <input type="text" name="nis" placeholder="NIS" required>
-    <input type="text" name="nama" placeholder="Nama" required>
-    <input type="text" name="kelas" placeholder="Kelas" required>
-    <select name="jk" required>
-      <option value="">Pilih Jenis Kelamin</option>
-      <option value="Laki-laki">Laki-laki</option>
-      <option value="Perempuan">Perempuan</option>
-    </select>
-    <input type="text" name="alamat" placeholder="Alamat">
-    <button type="submit">Tambah</button>
-  </form>
-  <table id="siswaTable" class="display nowrap">
-    <thead>
-      <tr>
-        <th>NIS</th>
-        <th>Nama</th>
-        <th>Kelas</th>
-        <th>JK</th>
-        <th>Alamat</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tfoot>
-      <tr>
-        <th><input type="text" placeholder="Cari NIS"></th>
-        <th><input type="text" placeholder="Cari Nama"></th>
-        <th><input type="text" placeholder="Cari Kelas"></th>
-        <th><input type="text" placeholder="Cari JK"></th>
-        <th><input type="text" placeholder="Cari Alamat"></th>
-        <th></th>
-      </tr>
-    </tfoot>
-    <tbody></tbody>
-  </table>
-</div>
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <ul>
+      <li onclick="showSection('dataSiswa')">Data Siswa</li>
+      <li onclick="showSection('nilaiSiswa')">Nilai Siswa</li>
+      <li onclick="showSection('nilaiHarian')">Nilai Harian</li>
+      <li onclick="showSection('nilaiSemester')">Nilai Semester</li>
+      <li onclick="showSection('rekapSemester')">Rekap Semester</li>
+    </ul>
+  </div>
+  <div class="content">
+    <button id="logoutBtn" onclick="logout()">Logout</button>
 
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script>
-const API_KEY = "AIzaSyDqrFS0ew8YpRbDKCUAWU3-i7WZ4M1tN5Q";
-const SHEET_ID = "1nAi5myvlMVVz1907FXB870iOyfZJGj38Prt49PU_xoU";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0U-J_r4U8L9ZEkCUjXZFpQDPHghqJvZCnLEh5Lu2-zSBy3Yn8pB0hYXZU19LG45iB/exec";
+    <div id="dataSiswa">
+      <h2>Dashboard Siswa</h2>
+      <form id="formSiswa">
+        <input type="text" name="nis" placeholder="NIS" required>
+        <input type="text" name="nama" placeholder="Nama" required>
+        <input type="text" name="kelas" placeholder="Kelas" required>
+        <select name="jk" required>
+          <option value="">Pilih Jenis Kelamin</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+        <input type="text" name="alamat" placeholder="Alamat">
+        <button type="submit">Tambah</button>
+      </form>
+      <table id="siswaTable" class="display nowrap">
+        <thead>
+          <tr>
+            <th>NIS</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>JK</th>
+            <th>Alamat</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th><input type="text" placeholder="Cari NIS"></th>
+            <th><input type="text" placeholder="Cari Nama"></th>
+            <th><input type="text" placeholder="Cari Kelas"></th>
+            <th><input type="text" placeholder="Cari JK"></th>
+            <th><input type="text" placeholder="Cari Alamat"></th>
+            <th></th>
+          </tr>
+        </tfoot>
+        <tbody></tbody>
+      </table>
+    </div>
 
-if (localStorage.getItem("isAdmin") !== "true") {
-  window.location.href = "login.html";
-}
+    <div id="nilaiSiswa" class="hidden">
+      <h2>Nilai Siswa</h2>
+      <p>Menampilkan seluruh nilai siswa berdasarkan NIS dan semester.</p>
+    </div>
 
-$(document).ready(function () {
-  const range = `Sheet1!A2:E`;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+    <div id="nilaiHarian" class="hidden">
+      <h2>Nilai Harian</h2>
+      <p>Input nilai harian tiap mata pelajaran.</p>
+    </div>
 
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      const rows = data.values || [];
-      rows.forEach(row => {
-        const tr = $("<tr>");
-        row.forEach(cell => tr.append(`<td>${cell}</td>`));
-        tr.append(`<td><button onclick="editRow('${row[0]}')">Edit</button><button onclick="deleteRow('${row[0]}')">Hapus</button></td>`);
-        $("#siswaTable tbody").append(tr);
-      });
+    <div id="nilaiSemester" class="hidden">
+      <h2>Nilai Semester</h2>
+      <p>Input nilai akhir tiap mata pelajaran untuk acuan penilaian Kurikulum Merdeka.</p>
+    </div>
 
-      $('#siswaTable').DataTable({
-        dom: 'Bfrtip',
-        buttons: ['excelHtml5', 'print'],
-        initComplete: function () {
-          this.api().columns().every(function () {
-            var column = this;
-            $('input', this.footer()).on('keyup change', function () {
-              column.search(this.value).draw();
-            });
+    <div id="rekapSemester" class="hidden">
+      <h2>Rekap Nilai Semester</h2>
+      <p>Menampilkan rata-rata dan deskripsi nilai per siswa dalam satu semester.</p>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    const API_KEY = "AIzaSyDqrFS0ew8YpRbDKCUAWU3-i7WZ4M1tN5Q";
+    const SHEET_ID = "1nAi5myvlMVVz1907FXB870iOyfZJGj38Prt49PU_xoU";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0U-J_r4U8L9ZEkCUjXZFpQDPHghqJvZCnLEh5Lu2-zSBy3Yn8pB0hYXZU19LG45iB/exec";
+
+    if (localStorage.getItem("isAdmin") !== "true") {
+      window.location.href = "login.html";
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.content > div').forEach(div => div.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      location.href = "login.html";
+    }
+
+    $(document).ready(function () {
+      const range = `Sheet1!A2:E`;
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const rows = data.values || [];
+          rows.forEach(row => {
+            const tr = $("<tr>");
+            row.forEach(cell => tr.append(`<td>${cell}</td>`));
+            tr.append(`<td><button onclick="editRow('${row[0]}')">Edit</button><button onclick="deleteRow('${row[0]}')">Hapus</button></td>`);
+            $("#siswaTable tbody").append(tr);
           });
-        }
+
+          $('#siswaTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['excelHtml5', 'print'],
+            initComplete: function () {
+              this.api().columns().every(function () {
+                var column = this;
+                $('input', this.footer()).on('keyup change', function () {
+                  column.search(this.value).draw();
+                });
+              });
+            }
+          });
+        });
+
+      $('#formSiswa').on('submit', function (e) {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(this));
+
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A2:A?key=${API_KEY}`)
+          .then(res => res.json())
+          .then(existing => {
+            const nisList = existing.values ? existing.values.flat() : [];
+            if (nisList.includes(data.nis)) {
+              alert("NIS sudah ada!");
+              return;
+            }
+
+            data.action = "add";
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              body: JSON.stringify(data)
+            })
+              .then(res => res.text())
+              .then(() => location.reload());
+          });
       });
     });
 
-  $('#formSiswa').on('submit', function (e) {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(this));
+    function editRow(nis) {
+      const row = $(`#siswaTable td:contains('${nis}')`).closest('tr');
+      const values = row.children('td').map(function(){ return $(this).text(); }).get();
+      const nama = prompt("Edit Nama", values[1]);
+      const kelas = prompt("Edit Kelas", values[2]);
+      const jk = prompt("Edit JK", values[3]);
+      const alamat = prompt("Edit Alamat", values[4]);
 
-    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A2:A?key=${API_KEY}`)
-      .then(res => res.json())
-      .then(existing => {
-        const nisList = existing.values ? existing.values.flat() : [];
-        if (nisList.includes(data.nis)) {
-          alert("NIS sudah ada!");
-          return;
-        }
-
-        data.action = "add";
+      if (nama && kelas && jk) {
+        const data = { action: "update", nis, nama, kelas, jk, alamat };
         fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify(data)
         })
-          .then(res => res.text())
-          .then(() => location.reload());
-      });
-  });
-});
+        .then(res => res.text())
+        .then(() => location.reload());
+      }
+    }
 
-function logout() {
-  localStorage.removeItem("isAdmin");
-  location.href = "login.html";
-}
-
-function editRow(nis) {
-  const row = $(`#siswaTable td:contains('${nis}')`).closest('tr');
-  const values = row.children('td').map(function(){ return $(this).text(); }).get();
-  const nama = prompt("Edit Nama", values[1]);
-  const kelas = prompt("Edit Kelas", values[2]);
-  const jk = prompt("Edit JK", values[3]);
-  const alamat = prompt("Edit Alamat", values[4]);
-
-  if (nama && kelas && jk) {
-    const data = { action: "update", nis, nama, kelas, jk, alamat };
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(data)
-    })
-    .then(res => res.text())
-    .then(() => location.reload());
-  }
-}
-
-function deleteRow(nis) {
-  if (confirm("Yakin hapus data ini?")) {
-    const data = { action: "delete", nis };
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(data)
-    })
-    .then(res => res.text())
-    .then(() => location.reload());
-  }
-}
-</script>
+    function deleteRow(nis) {
+      if (confirm("Yakin hapus data ini?")) {
+        const data = { action: "delete", nis };
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(data)
+        })
+        .then(res => res.text())
+        .then(() => location.reload());
+      }
+    }
+  </script>
 </body>
 </html>
