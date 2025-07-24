@@ -8,8 +8,42 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 20px;
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background-color: #0d47a1;
+      color: white;
+      padding: 20px;
+      width: 250px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .sidebar h2 {
+      color: white;
+      margin-top: 0;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      margin: 15px 0;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+    }
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      box-sizing: border-box;
     }
     table {
       width: 100% !important;
@@ -21,60 +55,64 @@
     #formSiswa, #logoutBtn {
       margin-bottom: 20px;
     }
-    @media screen and (max-width: 600px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      td {
-        border: none;
-        position: relative;
-        padding-left: 50%;
+    @media screen and (max-width: 768px) {
+      .sidebar {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
-
-<h2>Dashboard Siswa</h2>
-
-<button id="logoutBtn" onclick="logout()">Logout</button>
-
-<form id="formSiswa">
-  <input type="text" name="nis" placeholder="NIS" required>
-  <input type="text" name="nama" placeholder="Nama" required>
-  <input type="text" name="kelas" placeholder="Kelas" required>
-  <select name="jk" required>
-    <option value="">Pilih Jenis Kelamin</option>
-    <option value="Laki-laki">Laki-laki</option>
-    <option value="Perempuan">Perempuan</option>
-  </select>
-  <input type="text" name="alamat" placeholder="Alamat">
-  <button type="submit">Tambah</button>
-</form>
-
-<table id="siswaTable" class="display nowrap">
-  <thead>
-    <tr>
-      <th>NIS</th>
-      <th>Nama</th>
-      <th>Kelas</th>
-      <th>JK</th>
-      <th>Alamat</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tfoot>
-    <tr>
-      <th><input type="text" placeholder="Cari NIS"></th>
-      <th><input type="text" placeholder="Cari Nama"></th>
-      <th><input type="text" placeholder="Cari Kelas"></th>
-      <th><input type="text" placeholder="Cari JK"></th>
-      <th><input type="text" placeholder="Cari Alamat"></th>
-      <th></th>
-    </tr>
-  </tfoot>
-  <tbody></tbody>
-</table>
+<div class="sidebar">
+  <h2>Menu</h2>
+  <ul>
+    <li><a href="#">Data Siswa</a></li>
+    <li><a href="#">Nilai Siswa</a></li>
+    <li><a href="#">Nilai Harian</a></li>
+    <li><a href="#">Nilai Semester</a></li>
+    <li><a href="#">Rekap Nilai Semester</a></li>
+  </ul>
+  <p><small>* Nilai semester digunakan sebagai acuan dalam penilaian Kurikulum Merdeka.</small></p>
+</div>
+<div class="main-content">
+  <h2>Dashboard Siswa</h2>
+  <button id="logoutBtn" onclick="logout()">Logout</button>
+  <form id="formSiswa">
+    <input type="text" name="nis" placeholder="NIS" required>
+    <input type="text" name="nama" placeholder="Nama" required>
+    <input type="text" name="kelas" placeholder="Kelas" required>
+    <select name="jk" required>
+      <option value="">Pilih Jenis Kelamin</option>
+      <option value="Laki-laki">Laki-laki</option>
+      <option value="Perempuan">Perempuan</option>
+    </select>
+    <input type="text" name="alamat" placeholder="Alamat">
+    <button type="submit">Tambah</button>
+  </form>
+  <table id="siswaTable" class="display nowrap">
+    <thead>
+      <tr>
+        <th>NIS</th>
+        <th>Nama</th>
+        <th>Kelas</th>
+        <th>JK</th>
+        <th>Alamat</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th><input type="text" placeholder="Cari NIS"></th>
+        <th><input type="text" placeholder="Cari Nama"></th>
+        <th><input type="text" placeholder="Cari Kelas"></th>
+        <th><input type="text" placeholder="Cari JK"></th>
+        <th><input type="text" placeholder="Cari Alamat"></th>
+        <th></th>
+      </tr>
+    </tfoot>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -106,7 +144,7 @@ $(document).ready(function () {
         $("#siswaTable tbody").append(tr);
       });
 
-      const table = $('#siswaTable').DataTable({
+      $('#siswaTable').DataTable({
         dom: 'Bfrtip',
         buttons: ['excelHtml5', 'print'],
         initComplete: function () {
@@ -180,6 +218,5 @@ function deleteRow(nis) {
   }
 }
 </script>
-
 </body>
 </html>
