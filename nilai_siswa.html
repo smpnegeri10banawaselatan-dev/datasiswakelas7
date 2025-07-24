@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Nilai Siswa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form input, form select, form button {
+      padding: 8px;
+      margin: 5px;
+    }
+    #nilaiTable {
+      width: 100% !important;
+    }
+    @media screen and (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      td {
+        position: relative;
+        padding-left: 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h2>📋 Data Nilai Siswa</h2>
+
+<form id="formNilai">
+  <input type="text" name="nis" placeholder="NIS" required>
+  <input type="text" name="mapel" placeholder="Mata Pelajaran" required>
+  <input type="number" name="nilai" placeholder="Nilai" min="0" max="100" required>
+  <select name="semester" required>
+    <option value="">Pilih Semester</option>
+    <option value="Ganjil">Ganjil</option>
+    <option value="Genap">Genap</option>
+  </select>
+  <button type="submit">Tambah Nilai</button>
+</form>
+
+<table id="nilaiTable" class="display nowrap">
+  <thead>
+    <tr>
+      <th>NIS</th>
+      <th>Mata Pelajaran</th>
+      <th>Nilai</th>
+      <th>Semester</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0U-J_r4U8L9ZEkCUjXZFpQDPHghqJvZCnLEh5Lu2-zSBy3Yn8pB0hYXZU19LG45iB/exec";
+
+function fetchNilai() {
+  fetch(`${SCRIPT_URL}?type=nilai`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = $("#nilaiTable tbody");
+      tbody.empty();
+      data.forEach(row => {
+        tbody.append(`
+          <tr>
+            <td>${row.nis}</td>
+            <td>${row.mapel}</td>
+            <td>${row.nilai}</td>
+            <td>${row.semester}</td>
+            <td>
+              <button onclick="hapusNilai('${row.nis}', '${row.mapel}', '${row.semester}')">Hapus</button>
+            </td>
+          </tr>
+        `);
+      });
+
+      $('#nilaiTable').DataTable({
+        destroy: true,
+        dom: 'Bfrtip',
+        buttons: ['excelHtml5', 'print']
+      });
+    });
+}
+
+$("#formNilai").on("submit", function (e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  data.action = "add_nilai";
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+    .then(res => res.text())
+    .then(() => {
+      this.reset();
+      fetchNilai();
+    });
+});
+
+function hapusNilai(nis, mapel, semester) {
+  if (confirm("Hapus nilai ini?")) {
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "delete_nilai",
+        nis, mapel, semester
+      }),
+    })
+      .then(res => res.text())
+      .then(fetchNilai);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", fetchNilai);
+</script>
+</body>
+</html>
